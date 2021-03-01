@@ -1,7 +1,9 @@
 import random as rd
 import numpy as np
 import prettytable as pt
+import time as t
 
+start_time = t.time()
 X1 = np.array([rd.randint(1, 20) for i in range(8)])
 X2 = np.array([rd.randint(1, 20) for i in range(8)])
 X3 = np.array([rd.randint(1, 20) for i in range(8)])
@@ -37,5 +39,8 @@ for i in range(8):
 table.add_row(['x0', x01, x02, x03, Yet, ' ', '-', '-', '-'])
 table.add_row(['dx', dx1, dx2, dx3, '-', ' ', '-', '-', '-'])
 
+
 print(table)
 print('Точка плану, що задовольняє заданому критерію оптимальості - (', X1[Imax],';', X2[Imax], ';', X3[Imax],')' )
+
+print("Час роботи програми: %s секунд" % (t.time() - start_time))
