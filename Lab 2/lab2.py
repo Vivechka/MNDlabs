@@ -17,55 +17,58 @@ X2max = 80
 X2min = 30
 
 m = 5
-while True:
-    Y1 = np.array([rd.randint(Ymin, Ymax) for i in range(m)])
-    Y2 = np.array([rd.randint(Ymin, Ymax) for i in range(m)])
-    Y3 = np.array([rd.randint(Ymin, Ymax) for i in range(m)])
+count = 0
+for i in range(100):
+    while m<=20:
+        Y1 = np.array([rd.randint(Ymin, Ymax) for i in range(m)])
+        Y2 = np.array([rd.randint(Ymin, Ymax) for i in range(m)])
+        Y3 = np.array([rd.randint(Ymin, Ymax) for i in range(m)])
 
-    Y1mid = sum(Y1)/len(Y1)
-    Y2mid = sum(Y2)/len(Y2)
-    Y3mid = sum(Y3)/len(Y3)
+        Y1mid = sum(Y1)/len(Y1)
+        Y2mid = sum(Y2)/len(Y2)
+        Y3mid = sum(Y3)/len(Y3)
 
-    disp1 = 0
-    disp2 = 0
-    disp3 = 0
-    for i in range(len(Y1)):
-        disp1 += (Y1[i]- Y1mid)**2
-        disp2 += (Y2[i]- Y2mid)**2
-        disp3 += (Y3[i]- Y3mid)**2
+        disp1 = 0
+        disp2 = 0
+        disp3 = 0
+        for i in range(len(Y1)):
+            disp1 += (Y1[i]- Y1mid)**2
+            disp2 += (Y2[i]- Y2mid)**2
+            disp3 += (Y3[i]- Y3mid)**2
 
-    disp1 /= len(Y1)
-    disp2 /= len(Y2)
-    disp3 /= len(Y3)
+        disp1 /= len(Y1)
+        disp2 /= len(Y2)
+        disp3 /= len(Y3)
 
-    Maindiv = (2*(2*m-2)/(m*(m-4)))**(1/2)
-    def rahall(d1, d2):
-        F = 0
-        if d1 >= d2:
-            F = d1/d2
-        else:
-            F = d2/d1
+        Maindiv = (2*(2*m-2)/(m*(m-4)))**(1/2)
+        def rahall(d1, d2):
+            F = 0
+            if d1 >= d2:
+                F = d1/d2
+            else:
+                F = d2/d1
 
-        tet = ((m-2)/m)*F
+            tet = ((m-2)/m)*F
 
-        R = abs(tet-1)/Maindiv
-        return F, tet, R
+            R = abs(tet-1)/Maindiv
+            return F, tet, R
 
 
-    F12, Tet1, R1 = rahall(disp1, disp2)
-    F13, Tet2, R2 = rahall(disp1, disp3)
-    F23, Tet3, R3 = rahall(disp2, disp3)
+        F12, Tet1, R1 = rahall(disp1, disp2)
+        F13, Tet2, R2 = rahall(disp1, disp3)
+        F23, Tet3, R3 = rahall(disp2, disp3)
 
-    tab = {(5, 6, 7): 2.0, (8, 9): 2.17, (10, 11): 2.29, (12, 13): 2.39, (14, 15, 16, 17): 2.49, (18, 19, 20): 2.62}
-    Rkr = 0
-    for k in tab.keys():
-        if m in k: 
-            Rkr = tab[k]
+        tab = {(5, 6, 7): 2.0, (8, 9): 2.17, (10, 11): 2.29, (12, 13): 2.39, (14, 15, 16, 17): 2.49, (18, 19, 20): 2.62}
+        Rkr = 0
+        for k in tab.keys():
+            if m in k: 
+                Rkr = tab[k]
+                break
+
+        if R1 < Rkr and R2<Rkr and R3<Rkr:
+            count += 1
             break
-
-    if R1 < Rkr and R2<Rkr and R3<Rkr:
-        break
-    m+= 1
+        m+= 1
 
 
 mx1 = (X1[0]+X2[0]+X3[0])/3
