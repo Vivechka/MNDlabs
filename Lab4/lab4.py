@@ -1,5 +1,7 @@
 import random
 from prettytable import PrettyTable
+from functools import partial
+from scipy.stats import f, t as ts
     
 m = 3
 n = 8
@@ -33,6 +35,9 @@ plan_matrix = [[x1_min, x2_min, x3_min, x1_min * x2_min, x1_min * x3_min, x2_min
               [x1_max, x2_min, x3_max, x1_max * x2_min, x1_max * x3_max, x2_min * x3_max, x1_max * x2_min * x3_max],
               [x1_max, x2_max, x3_min, x1_max * x2_max, x1_max * x3_min, x2_max * x3_min, x1_max * x2_max * x3_min],
               [x1_max, x2_max, x3_max, x1_max * x2_max, x1_max * x3_max, x2_max * x3_max, x1_max * x2_max * x3_max]]
+f1 = 0
+f2 = 0  
+q = 0.05            
 while True:
     y_matrix = [[random.randint(int(y_min), int(y_max)) for _ in range(m)] for _ in range(n)]
 
@@ -49,7 +54,11 @@ while True:
 
     s = [sum([(y_matrix[j][i] - average_y[i]) ** 2 for i in range(m)]) / m for j in range(n)]
     gp = max(s) / sum(s)
-    gt = 0.5157
+    f1 = m-1
+    f2 = n 
+    q1 = q / f1
+    fisher_value = f.ppf(q=1 - q1, dfn=f2, dfd=(f1 - 1) * f2)
+    gt = fisher_value / (fisher_value + f1 - 1)
 
     if gp > gt:
         m += 1
@@ -63,7 +72,9 @@ s_beta = s_beta_2 ** (1 / 2)
 
 bb = [b0, b1, b2, b3, b12, b13, b23, b123]
 t = [abs(bb[i]) / s_beta for i in range(n)]
-tt = 2.120
+student = partial(ts.ppf, q=1 - q)
+f3 = f1*f2
+tt = student(df=f3)
 blist = [b0, b1, b2, b3, b12, b13, b23, b123]
 
 for i in range(n):
@@ -76,7 +87,10 @@ y_reg = [b0 + b1 * plan_matrix[i][0] + b2 * plan_matrix[i][1] + b3 * plan_matrix
              b123 * plan_matrix[i][6] for i in range(n)]
 sad = (m / (n - d)) * int(sum([(y_reg[i] - average_y[i]) ** 2 for i in range(n)]))
 fp = sad / sb
-if fp > 4.5:
+f4 = n-d
+fisher = partial(f.ppf, q=0.95)
+ft = fisher(dfn=f4, dfd=f3)
+if fp > ft:
     toPrint = 'неадекватно оригіналу при рівні значимості 0.05'
 else:
     toPrint = 'адекватно оригіналу при рівні значимості 0.05'
