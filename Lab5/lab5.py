@@ -148,11 +148,7 @@ def checkFull(x, y, b, n, m):
     skv = s_kv(y, y_aver, n, m)
     skv_aver = sum(skv) / n
     sbs_tmp = (skv_aver / n / m) ** 0.5
-    # bs_tmp = [sum(1 * y for y in y_aver) / n]
 
-    # for i in range(len(x[0])):
-    #     b = sum(j[0] * j[1] for j in zip(x[:, i], y_aver)) / n
-    #     bs_tmp.append(b)
     def bs(x, y_aver, n):
         res = [sum(1 * y for y in y_aver) / n]
         for i in range(len(x[0])):
