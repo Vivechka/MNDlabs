@@ -4,6 +4,7 @@ from scipy.stats import f, t
 from functools import partial
 from pyDOE2 import *
 from prettytable import PrettyTable
+from time import time 
 
 x_range = ((-1, 4), (-3, 6), (-1, 9))
 y_min = 200 + int(sum([x[0] for x in x_range]) / 3)
@@ -130,13 +131,15 @@ def checkFull(x, y, b, n, m):
     print('\nСередні значення Y:', y_aver)
     disp = s_kv(y, y_aver, n, m)
     print('Дисперсія Y:', disp)
-
+    ck = time()
+    
     f1 = m - 1
     f2 = n
     q = 0.05
     skv = s_kv(y, y_aver, n, m)
     gp = max(skv) / sum(skv)
 
+    ck = time() - ck
     print(f'\nКритерій Кохрена:\ngp = {gp}')
     if gp < g_kr:
         print('Дисперсія однорідна')
@@ -144,7 +147,7 @@ def checkFull(x, y, b, n, m):
         print("Дисперсія неонорідна")
         m += 1
         start(n, m)
-
+    cs = time()
     skv = s_kv(y, y_aver, n, m)
     skv_aver = sum(skv) / n
     sbs_tmp = (skv_aver / n / m) ** 0.5
@@ -159,7 +162,7 @@ def checkFull(x, y, b, n, m):
     bs_tmp = bs(x[:, 1:], y_aver, n)
     ts = [round(abs(b) / sbs_tmp, 3) for b in bs_tmp]
 
-
+    cs = time() - cs
     print('\nКритерій Стьюдента:\n{}:'.format(ts))
     res = [t for t in ts if t > t_student]
     final_k = [b[i] for i in range(len(ts)) if ts[i] in res]
@@ -174,7 +177,7 @@ def checkFull(x, y, b, n, m):
         print('\nF4 <= 0')
         return
     f4 = n - d
-    
+    cr = time()
     S_ad = m / (n - d) * sum([(y_new[i] - y_aver[i]) ** 2 for i in range(len(y))])
     skv = s_kv(y, y_aver, n, m)
     skv_aver = sum(skv) / n
@@ -182,6 +185,7 @@ def checkFull(x, y, b, n, m):
 
     fisher = partial(f.ppf, q = 1 - q)
     f_t = fisher(dfn=f4, dfd=f3)
+    cr = time() - cr
     print('\nКритерій Фішера:')
     print('fp =', f_p)
     print('ft =', f_t)
@@ -189,6 +193,9 @@ def checkFull(x, y, b, n, m):
         print('Математична модель адекватна')
     else:
         print('Математична модель неадекватна')
+    print("час проведення перевірки за критерієм Кохрена ", ck*1000, " мс" )
+    print("час проведення перевірки за критерієм Стьюдента ", cs*1000, " мс" )
+    print("час проведення перевірки за критерієм Фішера ", cr*1000, " мс" )
 
 
 def start(n, m):
